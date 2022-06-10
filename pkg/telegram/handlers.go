@@ -5,18 +5,24 @@ import (
 	"log"
 )
 
-func (b *Bot) handleCommand(message *tgbotapi.Message) {
+const commandStart = "start"
 
-	log.Printf("[%s] %s", message.From.UserName, message.Text)
+func (b *Bot) handleCommand(message *tgbotapi.Message) error {
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Команда не найдена ")
 
-	msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
-	// msg.ReplyToMessageID = update.Message.MessageID
+	switch message.Command() {
+	case commandStart:
+		msg.Text = "Привет"
 
-	b.bot.Send(msg)
+		_, err := b.bot.Send(msg)
+		return err
+	default:
+		_, err := b.bot.Send(msg)
+		return err
+	}
 }
 
 func (b *Bot) handleMessage(message *tgbotapi.Message) {
-
 	log.Printf("[%s] %s", message.From.UserName, message.Text)
 
 	msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
