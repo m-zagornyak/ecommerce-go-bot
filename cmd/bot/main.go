@@ -1,26 +1,21 @@
 package main
 
 import (
-	"flag"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/m-zagornyak/ecommerce-go-bot/pkg/telegram"
 	"log"
 )
 
 func main() {
-	t := mustToken()
-}
-
-func mustToken() string {
-	token := flag.String(
-		name: "token-bot",
-		value: "",
-		usage: "token for access to telegram-bot",
-	)
-
-	flag.Parse()
-
-	if *token == "" {
-		log.Fatal("token is not")
+	bot, err := tgbotapi.NewBotAPI("5347241093:AAHhBE-pyCpUDQitwmbZG0BNnLsnbJg5u2E")
+	if err != nil {
+		log.Panic(err)
 	}
 
-	return *token
+	bot.Debug = true
+
+	telegramBot := telegram.Newbot(bot)
+	if err := telegramBot.Start(); err != nil {
+		log.Fatal(err)
+	}
 }
