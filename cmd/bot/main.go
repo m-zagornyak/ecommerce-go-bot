@@ -30,4 +30,4 @@ func main() {
 
 	logger.Println("Running Application")
 	app.Run()
-}
+
