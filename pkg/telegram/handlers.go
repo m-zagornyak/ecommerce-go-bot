@@ -30,3 +30,20 @@ func (b *Bot) handleMessage(message *tgbotapi.Message) {
 
 	b.bot.Send(msg)
 }
+
+func (b *Bot) StartKeyboard(message *tgbotapi.Message) {
+
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Неверно")
+
+	switch message.Text {
+	case "open":
+		msg.ReplyMarkup = numericKeyboard
+
+	case "close":
+		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+	}
+
+	if _, err := b.bot.Send(msg); err != nil {
+		log.Panic(err)
+	}
+}

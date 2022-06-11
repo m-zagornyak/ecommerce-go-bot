@@ -1,0 +1,11 @@
+---
+
+is_debug: true
+is_development: true
+listen:
+  type: port
+  bind_p: 0.0.0.0
+  port: 10006
+app:
+  log_level: trace
+token: 5347241093:AAHhBE-pyCpUDQitwmbZG0BNnLsnbJg5u2E

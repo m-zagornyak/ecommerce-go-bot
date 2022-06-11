@@ -1,8 +1,0 @@
-bot_token: ""
-
-
-
-messages:
-  response:
-    start: "Привет"
-  errors:
