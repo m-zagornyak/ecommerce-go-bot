@@ -1,48 +1,48 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"github.com/ilyakaznacheev/cleanenv"
+	"log"
+	"sync"
+)
 
 type Config struct {
-	TOKEN string
+	IsDebug       bool `yaml:"is_debug" env:"ST_BOT_IS_DEBUG" env-default:"false"`
+	IsDevelopment bool `yaml:"is_development" env:"ST_BOT_IS_DEVELOPMENT" env-default:"false"`
+	Telegram      struct {
+		Token string `yaml:"Token" env:"ST_BOT_TELEGRAM_TOKEN" env-default:"5347241093:AAHhBE-pyCpUDQitwmbZG0BNnLsnbJg5u2E"`
+	}
+	AppConfig AppConfig `yaml:"app"`
 }
 
-func Init() (*Config, error) {
-	if err := setUpViper(); err != nil {
-		return nil, err
-	}
-
-	var cfg Config
-	if err := unmarshal(&cfg); err != nil {
-		return nil, err
-	}
-
-	if err := fromEnv(&cfg); err != nil {
-		return nil, err
-	}
-
-	return &cfg, nil
+type AppConfig struct {
+	LogLevel string `yaml:"log_level" env:"ST_BOT_LOG_LEVEL" env-default:"error"`
 }
 
-func unmarshal(cfg *Config) error {
-	if err := viper.Unmarshal(&cfg); err != nil {
-		return err
+var instance *Config
+var once sync.Once
+
+func GetConfig() *Config {
+	once.Do(func() {
+		instance = &Config{}
+
+		if err := cleanenv.ReadEnv(instance); err != nil {
+			help, _ := cleanenv.GetDescription(instance, nil)
+			log.Print(help)
+			log.Fatal(err)
+		}
+	})
+	return instance
+}
+
+/*
+
+func ConfigEnv() {
+	err := godotenv.Load("")
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
 
-	return nil
+	TOKEN := os.Getenv("S3_BUCKET")
 }
-
-func fromEnv(cfg *Config) error {
-	if err := viper.BindEnv("token"); err != nil {
-		return err
-	}
-	cfg.TOKEN = viper.GetString("token")
-
-	return nil
-}
-
-func setUpViper() error {
-	viper.AddConfigPath("configs")
-	viper.SetConfigName("main")
-
-	return viper.ReadInConfig()
-}
+*/

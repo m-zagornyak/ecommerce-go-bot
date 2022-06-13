@@ -3,10 +3,9 @@ package internal
 import (
 	"github.com/m-zagornyak/ecommerce-go-bot/internal/config"
 	"github.com/m-zagornyak/ecommerce-go-bot/pkg/logging"
-	tb "gopkg.in/tucnak/telebot.v2"
+	tele "gopkg.in/telebot.v3"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -33,9 +32,9 @@ func (a *app) Run() {
 }
 
 func (a *app) startBot() {
-	b, err := tb.NewBot(tb.Settings{
-		Token:  os.Getenv("5347241093:AAHhBE-pyCpUDQitwmbZG0BNnLsnbJg5u2E"),
-		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
+	b, err := tele.NewBot(tele.Settings{
+		Token:  a.cfg.Telegram.Token,
+		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
 	})
 
 	if err != nil {
@@ -43,8 +42,42 @@ func (a *app) startBot() {
 		return
 	}
 
-	b.Handle("/hello", func(m *tb.Message) {
-		b.Send(m.Sender, "hello world")
+	b.Handle("/hello", func(c tele.Context) error {
+		return c.Send("Hello!")
+	})
+
+	var (
+		menu     = &tele.ReplyMarkup{ResizeKeyboard: true}
+		selector = &tele.ReplyMarkup{}
+
+		btnHelp         = menu.Text("ℹ Поддержка")
+		btnCategory     = menu.Text("Все категории")
+		btnRecyclingBin = menu.Text("🗑 Корзина")
+
+		//	btnPrev = selector.Data("⬅", "prev", "help")
+		//	btnNext = selector.Data("➡", "next", "me")
+	)
+
+	menu.Reply(
+		menu.Row(btnHelp, btnRecyclingBin),
+		//menu.Row(btnRecyclingBin),
+		menu.Row(btnCategory),
+	)
+	selector.Inline(
+		selector.Row(btnHelp, btnRecyclingBin),
+		selector.Row(btnCategory),
+	)
+
+	b.Handle("/start", func(c tele.Context) error {
+		return c.Send("Hello!", menu)
+	})
+
+	b.Handle(&btnHelp, func(c tele.Context) error {
+		return c.Send("Here is some help: ...")
+	})
+
+	b.Handle(&btnRecyclingBin, func(c tele.Context) error {
+		return c.Respond()
 	})
 
 	b.Start()

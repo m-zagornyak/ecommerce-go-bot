@@ -8,4 +8,13 @@ listen:
   port: 10006
 app:
   log_level: trace
-token: 5347241093:AAHhBE-pyCpUDQitwmbZG0BNnLsnbJg5u2E
+Telegram:
+  Token: '5347241093:AAHhBE-pyCpUDQitwmbZG0BNnLsnbJg5u2E'
+
+messages:
+  start: ''
+keyboards:
+  help: ''
+  recyclingBin: ''
+  category: ''
+  
