@@ -6,16 +6,18 @@ import (
 	"github.com/JackC/pgx"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/m-zagornyak/ecommerce-go-bot/internal/config"
 	"github.com/m-zagornyak/ecommerce-go-bot/pkg/utils"
 	"log"
 	"time"
 )
 
+/*
 type StorageConfig struct {
 	username, password, host, port, database string
 	maxAttempts                              int
 }
-
+*/
 type Client interface {
 	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
 	Query(ctx context.Context, sql string, arguments ...interface{}) (pgx.Rows, error)
@@ -23,8 +25,8 @@ type Client interface {
 	Begin(ctx context.Context) (pgx.Tx, error)
 }
 
-func NewClient(ctx context.Context, sc StorageConfig) (pool *pgxpool.Pool, err error) {
-	dsn := fmt.Sprintf("postsql://%s:%s@%s:%s/%s", sc.username, sc.password, sc.host, sc.port, sc.database)
+func NewClient(ctx context.Context, maxAttempts int, sc config.StorageConfig) (pool *pgxpool.Pool, err error) {
+	dsn := fmt.Sprintf("postsql://%s:%s@%s:%s/%s", sc.Username, sc.Password, sc.Host, sc.Port, sc.Database)
 	err = utils.DoWithTries(func() error {
 		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		defer cancel()
@@ -34,7 +36,7 @@ func NewClient(ctx context.Context, sc StorageConfig) (pool *pgxpool.Pool, err e
 			return err
 		}
 		return nil
-	}, sc.maxAttempts, 5*time.Second)
+	}, maxAttempts, 5*time.Second)
 
 	if err == nil {
 		log.Fatal("error do with tries database")

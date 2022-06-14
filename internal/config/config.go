@@ -12,7 +12,17 @@ type Config struct {
 	Telegram      struct {
 		Token string `yaml:"Token" env:"ST_BOT_TELEGRAM_TOKEN" env-default:"5347241093:AAHhBE-pyCpUDQitwmbZG0BNnLsnbJg5u2E"`
 	}
-	AppConfig AppConfig `yaml:"app"`
+	AppConfig AppConfig     `yaml:"app"`
+	Storage   StorageConfig `yaml:"storage"`
+}
+
+type StorageConfig struct {
+	Host        string `json:"host"`
+	Port        string `json:"port"`
+	Database    string `json:"database"`
+	Username    string `json:"username"`
+	Password    string `json:"password"`
+	maxAttempts int    `json:"maxAttempts"`
 }
 
 type AppConfig struct {
