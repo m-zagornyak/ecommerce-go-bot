@@ -1,37 +1,42 @@
-package internal
+package telegram
 
 import (
 	"github.com/m-zagornyak/ecommerce-go-bot/internal/config"
 	"github.com/m-zagornyak/ecommerce-go-bot/pkg/logging"
 	tele "gopkg.in/telebot.v3"
 	"log"
-	"net/http"
 	"time"
+
+	"net/http"
+	//"time"
 )
 
-type app struct {
-	cfg        *config.Config
-	logger     *logging.Logger
-	httpServer *http.Server
+type App struct {
+	Cfg        *config.Config
+	Logger     *logging.Logger
+	HttpServer *http.Server
+	Bot 	     *tele.Bot
 }
 
-type App interface {
+type BaseApp interface {
 	Run()
 }
 
-func NewApp(logger *logging.Logger, cfg *config.Config) (App, error) {
+func NewApp(logger *logging.Logger, cfg *config.Config) (BaseApp, error) {
 	logger.Println("")
-	return &app{
-		cfg:    cfg,
-		logger: logger,
+	return &App{
+		Cfg:    cfg,
+		Logger: logger,
+
 	}, nil
 }
 
-func (a *app) Run() {
+func (a *App) Run() {
 	a.startBot()
 }
 
-func (a *app) startBot() {
+func (a *App) NewBot() *tele.Bot{
+
 	b, err := tele.NewBot(tele.Settings{
 		Token:  a.cfg.Telegram.Token,
 		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
@@ -39,13 +44,10 @@ func (a *app) startBot() {
 
 	if err != nil {
 		log.Fatal(err)
-		return
+		return b
 	}
 
-	b.Handle("/hello", func(c tele.Context) error {
-		return c.Send("Hello!")
-	})
-
+/*
 	var (
 		menu     = &tele.ReplyMarkup{ResizeKeyboard: true}
 		selector = &tele.ReplyMarkup{}
@@ -60,7 +62,6 @@ func (a *app) startBot() {
 
 	menu.Reply(
 		menu.Row(btnHelp, btnRecyclingBin),
-		//menu.Row(btnRecyclingBin),
 		menu.Row(btnCategory),
 	)
 	selector.Inline(
@@ -79,6 +80,7 @@ func (a *app) startBot() {
 	b.Handle(&btnRecyclingBin, func(c tele.Context) error {
 		return c.Respond()
 	})
-
 	b.Start()
+
 }
+*/

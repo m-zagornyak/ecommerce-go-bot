@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/m-zagornyak/ecommerce-go-bot/internal"
 	"github.com/m-zagornyak/ecommerce-go-bot/internal/config"
+	"github.com/m-zagornyak/ecommerce-go-bot/internal/telegram"
 	"github.com/m-zagornyak/ecommerce-go-bot/pkg/logging"
 	"log"
 )
@@ -23,7 +23,7 @@ func main() {
 	logger := logging.GetLogger()
 
 	logger.Println("Creating Application")
-	app, err := internal.NewApp(logger, cfg)
+	app, err := telegram.NewApp(logger, cfg)
 	if err != nil {
 		logger.Fatal(err)
 	}
